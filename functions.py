@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
 import seaborn as sns
 
 def create_pie_chart(df, column):
@@ -15,14 +13,14 @@ def create_pie_chart(df, column):
     plt.show()
 
 
-def plot_side_by_side(dataframe,columns, titles=None, figsize=(10, 5)):
+def plot_side_by_side(df,columns, titles=None, figsize=(10, 5)):
 
     num_plots = len(columns)
 
     plt.figure(figsize=figsize)
 
     for i, col in enumerate(columns, 1):
-        create_pie_chart(dataframe,col)
+        create_pie_chart(df,col)
 
     plt.tight_layout()
     plt.show()
