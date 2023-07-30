@@ -1,11 +1,11 @@
-import numpy as np
-import pandas as pd
+# import numpy as np
+# import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def create_pie_chart(df, column):
+def create_pie_chart(df, column, figsize=(3, 3)):
 
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=figsize)
     df[column].value_counts().plot(kind='pie',autopct='%1.1f%%', startangle=140)
 
     plt.title(f'Pie Chart {column}')
@@ -27,13 +27,14 @@ def plot_side_by_side(df,columns, titles=None, figsize=(10, 5)):
     plt.tight_layout()
     plt.show()
 
-def normalize_plot(df,col_x,col_hue):
+def normalize_plot(df,col_x,col_hue, order_x=None, height=4, aspect = 2):
 
     df1 = df.groupby(col_x)[col_hue].value_counts(normalize=True)
     df1 = df1.mul(100)
     df1 = df1.rename('percent').reset_index()
 
-    g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1)
+    g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1, order=order_x, height=height, aspect=aspect)
+
     g.ax.set_ylim(0,100)
 
     for p in g.ax.patches:
@@ -41,6 +42,8 @@ def normalize_plot(df,col_x,col_hue):
         txt_x = p.get_x() 
         txt_y = p.get_height()
         g.ax.text(txt_x,txt_y,txt)
+
+    g.set(title=f"Percentage of {col_x} by {col_hue}")
 
 def graph_with_lines(df,byparam,param1,param2=None):
 
