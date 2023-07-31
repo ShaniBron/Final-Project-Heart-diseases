@@ -27,22 +27,14 @@ def plot_side_by_side(df,columns, titles=None, figsize=(10, 5)):
     plt.tight_layout()
     plt.show()
 
-<<<<<<< Updated upstream
 def normalize_plot(df,col_x,col_hue, order_x=None, height=4, aspect = 2):
-=======
-def normalize_plot(df,col_x,col_hue, order_x=None):
->>>>>>> Stashed changes
 
     df1 = df.groupby(col_x)[col_hue].value_counts(normalize=True)
     df1 = df1.mul(100)
     df1 = df1.rename('percent').reset_index()
 
-<<<<<<< Updated upstream
     g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1, order=order_x, height=height, aspect=aspect)
 
-=======
-    g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1, order=order_x)
->>>>>>> Stashed changes
     g.ax.set_ylim(0,100)
 
     for p in g.ax.patches:
