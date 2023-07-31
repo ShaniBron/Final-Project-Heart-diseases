@@ -1,3 +1,7 @@
+# from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder
+# import pandas as pd
+
 class AddColumnGroup():
     def __init__(self,columns,columns_new):
         self.columns=columns
@@ -5,9 +9,9 @@ class AddColumnGroup():
         
     def transform(self, X):
         X_copy=X.copy()
-        for i in range(self.columns):
-            for key, value in self.columns_new[i]:
-                X_copy[self.columns[i]].replace(key, value)
+        for i in range(len(self.columns)):
+            for key, value in self.columns_new[i].items():
+                X_copy[self.columns[i]].replace(key, value, inplace=True)
         return X_copy
         
     def fit(self, X, y=None):
@@ -25,4 +29,4 @@ class AddColumnIndex():
         return X_copy
         
     def fit(self, X, y=None):
-        return self  
+        return self

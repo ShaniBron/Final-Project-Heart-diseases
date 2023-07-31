@@ -1,7 +1,10 @@
 # import numpy as np
-# import pandas as pd
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score
 
 def create_pie_chart(df, column, figsize=(3, 3)):
 
@@ -60,3 +63,14 @@ def graph_with_lines(df,byparam,param1,param2=None):
 
     plt.title(f'{param1} {param2} Average by {byparam}')
     plt.legend(loc="upper left")
+
+def report(clf, X, y):
+    acc = accuracy_score(y_true=y, 
+                         y_pred=clf.predict(X))
+    cm = pd.DataFrame(confusion_matrix(y_true=y, 
+                                       y_pred=clf.predict(X)), 
+                      index=clf.classes_, 
+                      columns=clf.classes_)
+    rep = classification_report(y_true=y, 
+                                y_pred=clf.predict(X))
+    return 'accuracy: {:.3f}\n\n{}\n\n{}'.format(acc, cm, rep)
