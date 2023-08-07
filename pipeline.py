@@ -2,6 +2,11 @@
 from sklearn.preprocessing import LabelEncoder
 # import pandas as pd
 
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.base import BaseEstimator, TransformerMixin
+
+
 class AddColumnGroup():
     def __init__(self,columns,columns_new):
         self.columns=columns
@@ -29,4 +34,30 @@ class AddColumnIndex():
         return X_copy
         
     def fit(self, X, y=None):
+        return self
+
+class SMOTETransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, sampling_strategy=0.1, k_neighbors=7):
+        self.sampling_strategy = sampling_strategy
+        self.k_neighbors = k_neighbors
+        self.smote = SMOTE(sampling_strategy=sampling_strategy, k_neighbors=k_neighbors)
+
+    def transform(self, X, y=None):
+        return X
+         
+    def fit(self, X, y):
+        X_resampled, y_resampled = self.smote.fit_resample(X, y)
+        return self
+    
+
+class RandomUnderSamplerTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, sampling_strategy=0.5):
+        self.sampling_strategy = sampling_strategy
+        self.under_sampler = RandomUnderSampler(sampling_strategy=sampling_strategy)
+
+    def transform(self, X, y=None):
+        return X
+    
+    def fit(self, X, y):
+        X_resampled, y_resampled = self.under_sampler.fit_resample(X, y)
         return self

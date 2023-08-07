@@ -3,8 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix, classification_report,\
+                             roc_auc_score, recall_score, precision_score, average_precision_score
+
+from sklearn.preprocessing import LabelEncoder
 
 def create_pie_chart(df, column, figsize=(3, 3)):
 
@@ -65,12 +67,44 @@ def graph_with_lines(df,byparam,param1,param2=None):
     plt.legend(loc="upper left")
 
 def report(clf, X, y):
-    acc = accuracy_score(y_true=y, 
-                         y_pred=clf.predict(X))
+    pred = clf.predict(X)
     cm = pd.DataFrame(confusion_matrix(y_true=y, 
-                                       y_pred=clf.predict(X)), 
+                                       y_pred=pred), 
                       index=clf.classes_, 
                       columns=clf.classes_)
-    rep = classification_report(y_true=y, 
-                                y_pred=clf.predict(X))
-    return 'accuracy: {:.3f}\n\n{}\n\n{}'.format(acc, cm, rep)
+    precision = precision_score(y,pred)
+    recall = recall_score(y,pred)
+                 
+    auc = roc_auc_score(y, pred)
+    
+    PR_curve = average_precision_score(y,pred)
+
+    report_dict = {'cm': cm, 'precision': precision, 'recall': recall, 'AUC': auc, 'PR': PR_curve}
+    return report_dict
+  
+
+def printreport(clf, X, y, Xtest=None, ytest=None):
+    
+    train = report(clf, X, y)
+    
+    if Xtest is not None and ytest is not None:
+        test = report(clf, Xtest, ytest)
+
+        return print('Train Confusion Matrix:\n{}\n\nTest Confusion Matrix:\n{}\n\nTrain Precision: {:.3f}\nTest Precision: {:.3f}\n\nTrain Recall: {:.3f}\nTest Recall: {:.3f}\n\nTrain ROC AUC: {:.3f}\nTest ROC AUC: {:.3f}\n\nTrain PR Curve: {:.3f}\nTest PR Curve: {:.3f}'.\
+            format(train['cm'], test['cm'], train['precision'], test['precision'], train['recall'], test['recall'], train['AUC'], test['AUC'], train['PR'], test['PR']))
+
+    else:    
+        return print('Confusion Matrix:\n{}\n\nPrecision: {:.3f}\nRecall: {:.3f}\nROC AUC: {:.3f}\nPR Curve: {:.3f}'.format(train['cm'], train['precision'], train['recall'], train['AUC'], train['PR']))
+    
+
+def transform(X,list_col_indx,list_col_rplce=None,list_what_rplce=None):
+        cat_cols = LabelEncoder()
+        X_copy=X.copy()
+        X_copy[list_col_indx] = X_copy[list_col_indx].apply(lambda col:cat_cols.fit_transform(col))
+        
+        if list_col_rplce is not None and list_what_rplce is not None:
+            for i in range(len(list_col_rplce)):
+                for key, value in list_what_rplce[i].items():
+                    X_copy[list_col_rplce[i]].replace(key, value, inplace=True)
+
+        return X_copy
