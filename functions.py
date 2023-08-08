@@ -68,6 +68,7 @@ def graph_with_lines(df,byparam,param1,param2=None):
 
 def report(clf, X, y):
     pred = clf.predict(X)
+    predproba = clf.predict_proba(X)[:, 1]
     cm = pd.DataFrame(confusion_matrix(y_true=y, 
                                        y_pred=pred), 
                       index=clf.classes_, 
@@ -75,9 +76,9 @@ def report(clf, X, y):
     precision = precision_score(y,pred)
     recall = recall_score(y,pred)
                  
-    auc = roc_auc_score(y, pred)
+    auc = roc_auc_score(y, predproba)
     
-    PR_curve = average_precision_score(y,pred)
+    PR_curve = average_precision_score(y,predproba)
 
     report_dict = {'cm': cm, 'precision': precision, 'recall': recall, 'AUC': auc, 'PR': PR_curve}
     return report_dict
