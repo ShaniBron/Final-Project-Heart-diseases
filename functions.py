@@ -8,6 +8,8 @@ from sklearn.metrics import confusion_matrix, classification_report,\
 
 from sklearn.preprocessing import LabelEncoder
 
+mypal= ['#FC05FB', '#FEAEFE', '#FCD2FC','#F3FEFA', '#B4FFE4','#3FFEBA']
+
 def create_pie_chart(df, column, figsize=(3, 3)):
 
     plt.figure(figsize=figsize)
@@ -38,7 +40,7 @@ def normalize_plot(df,col_x,col_hue, order_x=None, height=4, aspect = 2):
     df1 = df1.mul(100)
     df1 = df1.rename('percent').reset_index()
 
-    g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1, order=order_x, height=height, aspect=aspect)
+    g = sns.catplot(x=col_x,y='percent',hue=col_hue,kind='bar',data=df1, order=order_x, height=height, aspect=aspect, palette=mypal[1::4])
 
     g.ax.set_ylim(0,100)
 
@@ -109,3 +111,17 @@ def transform(X,list_col_indx,list_col_rplce=None,list_what_rplce=None):
                     X_copy[list_col_rplce[i]].replace(key, value, inplace=True)
 
         return X_copy
+
+
+def graph_distrib(df,distrb_col,by_col):
+    
+    fig, ax = plt.subplots(figsize = (13,5))
+
+    sns.kdeplot(df[df[by_col]==df[by_col].unique()[1]][distrb_col], alpha=0.5,shade = True, color="red", label=f"{by_col} {df[by_col].unique()[1]}", ax = ax)
+    sns.kdeplot(df[df[by_col]==df[by_col].unique()[0]][distrb_col], alpha=0.5,shade = True, color="#fccc79", label=f"{by_col} {df[by_col].unique()[0]}", ax = ax)
+    plt.title(f'Distribution of {distrb_col} by {by_col}', fontsize = 18)
+    ax.set_xlabel(f"{distrb_col}")
+    ax.set_ylabel("Frequency")
+    ax.legend()
+    plt.show()
+
