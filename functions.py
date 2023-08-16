@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from sklearn.metrics import confusion_matrix, classification_report,\
-                             roc_auc_score, recall_score, precision_score, average_precision_score
+                             roc_auc_score, roc_curve, recall_score, precision_score, average_precision_score
 
 from sklearn.preprocessing import LabelEncoder
+
 
 mypal= ['#FC05FB', '#FEAEFE', '#FCD2FC','#F3FEFA', '#B4FFE4','#3FFEBA']
 
@@ -125,3 +126,24 @@ def graph_distrib(df,distrb_col,by_col):
     ax.legend()
     plt.show()
 
+
+def result_table(list_of_models,list_of_models_names,X,y):
+    results_table = pd.DataFrame(columns=['Model','Recall', 'Precision', 'AUC', 'PR'])
+    for i in range(len(list_of_models)):
+        pred = list_of_models[i].predict(X)
+        predproba = list_of_models[i].predict_proba(X)[:, 1]
+
+        dict_m ={'Model':list_of_models_names[i], 'Recall': recall_score(y_test,pred), 'Precision': precision_score(y,pred), \
+                'AUC': roc_auc_score(y, predproba),'PR': average_precision_score(y,predproba)}
+
+        results_table = results_table.append(dict_m,ignore_index=True)
+    return results_table
+
+def roc_curve_plot(list_of_models,list_of_models_names,X,y):
+    plt.figure(figsize=(10,8))
+    for i in range(len(list_of_models)):
+        y_pred_proba = list_of_models[i].predict_proba(X)[::,1]
+        fpr, tpr, _ = roc_curve(y,  y_pred_proba)
+        plt.plot(fpr,tpr,label=list_of_models_names[i])
+    plt.legend(loc=4)
+    plt.show()
