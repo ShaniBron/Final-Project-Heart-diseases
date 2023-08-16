@@ -137,6 +137,9 @@ def result_table(list_of_models,list_of_models_names,X,y):
                 'AUC': roc_auc_score(y, predproba),'PR': average_precision_score(y,predproba)}
 
         results_table = results_table.append(dict_m,ignore_index=True)
+    
+    results_table.set_index('Model',inplace=True)
+
     return results_table
 
 def roc_curve_plot(list_of_models,list_of_models_names,X,y):
@@ -145,5 +148,6 @@ def roc_curve_plot(list_of_models,list_of_models_names,X,y):
         y_pred_proba = list_of_models[i].predict_proba(X)[::,1]
         fpr, tpr, _ = roc_curve(y,  y_pred_proba)
         plt.plot(fpr,tpr,label=list_of_models_names[i])
+    plt.title('ROC Curve')
     plt.legend(loc=4)
     plt.show()
